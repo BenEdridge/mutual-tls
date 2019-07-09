@@ -4,11 +4,17 @@
   "description": "POC for mutual tls",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "start:client": "node client.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ben",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/BenEdridge/Mutual_TLS.git"
   }
 }
