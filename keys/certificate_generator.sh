@@ -35,5 +35,12 @@ openssl req -new -sha256 -key client.pem -out client-csr.pem
 echo "Signing Client Key with CA";
 openssl x509 -req -days 200 -in client-csr.pem -CA ca-crt.pem -CAkey ca-key.pem  -out signed-client-crt.pem 
 
+#########################
+# Checking              #
+#########################
+
+openssl verify -CAfile ca-crt.pem signed-client-crt.pem
+openssl verify -CAfile ca-crt.pem server-crt.pem
+
 # Import for OSX keychain
 # security import client.pem -k ~/Library/Keychains/login.keychain
