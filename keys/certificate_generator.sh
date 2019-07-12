@@ -1,46 +1,59 @@
 #!/bin/sh
 
+cat << EOF
+
 #########################
 # Certificate Authority #
 #########################
 
-echo "Creating Certificate Authority Certificate";
+EOF
+
 # Must be a v3_ca certificate to prevent issues with Client usage in some browsers or OSes
-openssl req -new -x509 -days 365 -keyout ca-key.pem -out ca-crt.pem -extensions v3_ca
+openssl req -new -x509 -days 365 -subj '/CN=LOCAL-CA/O=My Company Name LTD./C=US' -keyout CA_key.pem -out CA.crt -extensions v3_ca
 
-#########################
-# Server                #
-#########################
+cat << EOF
 
-echo "Generating Server Private Key";
-openssl genrsa -out server-key.pem 4096
+#################################
+# Generating Server Private Key #
+#################################
 
-echo "Generating Server Certificate Signing Request";
-openssl req -new -sha256 -key server-key.pem -out server-csr.pem
+EOF
 
-echo "Signing Server Key with CA";
-openssl x509 -req -days 365 -in server-csr.pem -CA ca-crt.pem -CAkey ca-key.pem -CAcreateserial -out server-crt.pem
+openssl genrsa -out SERVER_key.pem 4096
+
+# Generating Server Certificate Signing Request
+openssl req -new -sha256 -key SERVER_key.pem -out SERVER_CSR.pem
+
+# Signing Server Key with CA
+openssl x509 -req -days 365 -in SERVER_CSR.pem -CA CA.crt -CAkey CA_key.pem -CAcreateserial -out SERVER.crt
+
+cat << EOF
 
 #########################
 # Client                #
 #########################
 
+EOF
+
 # Create as many clients as you need, all clients must be signed by the CA.
-echo "Creating Client Private Key";
-openssl genrsa -out client.pem 2048
+openssl genrsa -out CLIENT_1.pem 2048
 
-echo "Creating Client Certificate Signing Request";
-openssl req -new -sha256 -key client.pem -out client-csr.pem
+# Creating Client Certificate Signing Request
+openssl req -new -sha256 -key CLIENT_1.pem -out CLIENT_CSR.pem
 
-echo "Signing Client Key with CA";
-openssl x509 -req -days 200 -in client-csr.pem -CA ca-crt.pem -CAkey ca-key.pem  -out signed-client-crt.pem 
+# Signing Client Key with CA
+openssl x509 -req -days 200 -in CLIENT_CSR.pem -CA CA.crt -CAkey CA_key.pem  -out CLIENT_1.crt
+
+cat << EOF
 
 #########################
-# Checking              #
+# Verifying             #
 #########################
 
-openssl verify -CAfile ca-crt.pem signed-client-crt.pem
-openssl verify -CAfile ca-crt.pem server-crt.pem
+EOF
+
+openssl verify -CAfile CA.crt CLIENT_1.crt
+openssl verify -CAfile CA.crt SERVER.crt 
 
 # Import for OSX keychain
 # security import client.pem -k ~/Library/Keychains/login.keychain
