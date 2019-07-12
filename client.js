@@ -6,9 +6,9 @@ const options = {
     port: 8443,
     path: '/',
     method: 'GET',
-    key: fs.readFileSync('keys/client.pem'),
-    cert: fs.readFileSync('keys/signed-client-crt.pem'),
-    ca: fs.readFileSync('keys/ca-crt.pem'),
+    key: fs.readFileSync('keys/CLIENT_1.pem'),
+    cert: fs.readFileSync('keys/CLIENT_1.crt'),
+    ca: fs.readFileSync('keys/CA.crt'),
     //rejectUnauthorized: false,
 };
 
