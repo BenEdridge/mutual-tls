@@ -1,3 +1,10 @@
+# generated key files
+keys
+
+#######################
+# Standard NodeJS
+#######################
+
 # Logs
 logs
 *.log
