@@ -9,26 +9,23 @@ const options = {
     cert: fs.readFileSync('keys/SERVER.crt'),
     ca: fs.readFileSync('keys/CA.crt'),
     requestCert: true,
-    rejectUnauthorized: false, //if enabled you cannot do authentication based on client cert
-    enableTrace: true,
-    passphrase: '1234' //only if private key requires?
+    rejectUnauthorized: true, // if enabled you cannot do authentication based on client cert
+    enableTrace: true, // Debug errors if required
+    passphrase: '1234' // Pass if SERVER_key.pem requires
 };
 
 app.use((req, res) => {
     if(!req.client.authorized){
         return res.status(401).send('ACCESS DENIED');
     }
-    //examine the cert itself, and even validate based on that!
+    // Examine the cert itself, and even validate based on that if required
     const cert = req.socket.getPeerCertificate();
     if (cert.subject) {
-       console.log(cert.subject.CN);
+        console.log(`${cert.subject.CN} has logged in`);
     }
-    res.send('You have logged in');
-    //res.writeHead(200);
-    //res.end("hello world\n");
-    //next();
+    res.end('You have logged in\n');
 });
 
 const listener = https.createServer(options, app).listen(8443, () => {
-    console.log('Express HTTPS server listening on port ' + listener.address().port);
+    console.log(`Express HTTPS server listening on port ${listener.address().port}`);
 });

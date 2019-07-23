@@ -1,21 +1,25 @@
 {
   "name": "mutual_tls",
   "version": "1.0.0",
-  "description": "POC for mutual tls",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "start:client": "node client.js",
-    "generate:keys": "./keys/key_generator.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "POC for Mutual TLS client and server",
   "author": "Ben",
   "license": "ISC",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BenEdridge/Mutual_TLS.git"
+  },
+  "scripts": {
+    "start:server": "node server.js",
+    "start:client": "node client.js",
+    "generate:keys-openssl": "sh ./openssl_generator.sh",
+    "generate:keys-forge": "node generator",
+    "generate:clean": "rm keys/*"
+  },
   "dependencies": {
     "express": "^4.17.1"
   },
-  "repository": {
-    "type" : "git",
-    "url" : "https://github.com/BenEdridge/Mutual_TLS.git"
+  "devDependencies": {
+    "node-forge": "^0.8.5"
   }
 }

@@ -6,10 +6,9 @@ const options = {
     port: 8443,
     path: '/',
     method: 'GET',
-    key: fs.readFileSync('keys/CLIENT_1.pem'),
-    cert: fs.readFileSync('keys/CLIENT_1.crt'),
-    ca: fs.readFileSync('keys/CA.crt'),
-    //rejectUnauthorized: false,
+    key: fs.readFileSync('keys/CLIENT_key.pem'),
+    cert: fs.readFileSync('keys/CLIENT.crt'),
+    ca: fs.readFileSync('keys/CA.crt')
 };
 
 const req = https.request(options, (res) => {

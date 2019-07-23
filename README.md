@@ -1,26 +1,30 @@
-# An example Mutual TLS client and server written in NodeJS
+# Mutual TLS server and client in NodeJS
 
 A better and more complete example of Mutual TLS authentication in NodeJS.
-- Working for browser based authentication in OSX
-- NodeJS Client coming soon
-
-Client can be NodeJS TLS client or a browser
-For a browser you will need to import the CA and private key for usage!
+- Working for browser based authentication (Requires setup)
+- NodeJS Client connects to TLS server using supplied certificates
+- Keys and Certs in `keys` can be used with other clients
 
 ## Getting started
 
-`keys/certificate_generator.sh`
-
-Load the above client certificate and CA into your keychain/browser:
-
 ```
 npm install
-npm start
+npm run generate:keys // Load these client keys into your browser/OS if required
+npm run start:server   // Starts the server
+npm run start:client   // Starts the client
 ```
 
-Connect your client to: `localhost` hopefully you will see a successful connection and no TLS issues if all is working well.
+Connect your browser to: `localhost` hopefully you will see a successful connection and no TLS issues if all is working well.
 
-## Instructions for setting up a client:
+## Instructions for clients and certificate imports:
+
+### Linux
+
+### Android
+
+### OSX
+
+### Windows
 
 ## Resources used to build this
 https://intown.biz/2016/11/22/node-client-auth/
