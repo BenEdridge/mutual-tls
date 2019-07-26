@@ -12,7 +12,7 @@
   "scripts": {
     "start:server": "node server.js",
     "start:client": "node client.js",
-    "generate:keys-openssl": "sh ./openssl_generator.sh",
+    "generate:keys-openssl": "sh ./interactive_openssl_generator.sh",
     "generate:keys-forge": "node generator",
     "generate:clean": "rm keys/*"
   },
