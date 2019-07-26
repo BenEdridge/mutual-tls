@@ -34,13 +34,19 @@ certificates have been imported to your browser/OS.
 
 ## Importing and using Certificates
 
-The generator script will create 3 certificates:
+The generator script will create certificates and private keys in the `keys` directory.
 
-1. CA.crt
-2. SERVER.crt
-3. CLIENT.crt
+- Certificates:
+  - CA.crt
+  - CLIENT.crt
+  - SERVER.crt
 
-These certificates need to be imported and loaded into the browser or operating system connecting your the server as below.
+- Private Keys:
+  - CA_key.pem
+  - CLIENT_key.pem
+  - SERVER_key.pem
+
+These certificates and keys need to be imported and loaded into the browser or operating system connecting your the server as below.
 
 ### OSX
 
