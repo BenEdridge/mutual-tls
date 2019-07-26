@@ -22,6 +22,13 @@ npm run start:client
 npm run generate:clean
 ```
 
+```
+// Quick tests using curl and openssl
+
+tests/curl.sh
+tests/openssl_client.sh
+```
+
 Connect your browser to: `localhost:8443` and you should be requested to supply a certificate or should connect automatically if the `CA` and `Client`
 certificates have been imported to your browser/OS.
 
