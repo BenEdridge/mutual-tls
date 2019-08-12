@@ -11,7 +11,9 @@
   },
   "scripts": {
     "start:server": "node server.js",
+    "start:server2": "node server_http2.js",
     "start:client": "node client.js",
+    "start:client2": "node client_http2.js",
     "generate:keys-openssl": "sh ./interactive_openssl_generator.sh",
     "generate:keys-forge": "node generator",
     "generate:clean": "rm keys/*"
