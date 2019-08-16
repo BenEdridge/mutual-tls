@@ -50,11 +50,27 @@ These certificates and keys need to be imported and loaded into the browser or o
 
 ### OSX
 
+OSX requires the relevant keys to be imported into the keychain:
+
+See `security --help` for additional options
+
+```
+security import CA.crt -k ~/Library/Keychains/login.keychain
+security import CLIENT.crt -k ~/Library/Keychains/login.keychain
+security import CLIENT_key.pem -k ~/Library/Keychains/login.keychain
+security import SERVER.crt -k ~/Library/Keychains/login.keychain
+```
+
+Safari and Chrome should work once keys have been trusted and key preferences set to hostname.
+
+Firefox has it's own keystore that doesn't like PEM formatted keys are prefers p12 format.
+So you will need to import the `CLIENT.p12` file using the password from the generator output in the console.
+
 ### Linux
 
 ### Android
 
-- Transfer the CA and Client certificate to your device
+- Transfer the `CA.crt` and `CLIENT.p12` file to your device
 - Settings -> Security -> Device Administrator and Credentials -> Install from SD card etc.
 
 ### Windows

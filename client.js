@@ -1,14 +1,17 @@
+'use strict';
+
 const fs = require('fs');
 const https = require('https');
+const conf = require('./config');
 
 const options = {
-    hostname: 'localhost',
-    port: 8443,
+    hostname: conf.env.host,
+    port: conf.env.port,
     path: '/',
     method: 'GET',
-    key: fs.readFileSync('keys/CLIENT_key.pem'),
-    cert: fs.readFileSync('keys/CLIENT.crt'),
-    ca: fs.readFileSync('keys/CA.crt')
+    key: fs.readFileSync(conf.env.clientKey),
+    cert: fs.readFileSync(conf.env.clientCert),
+    ca: fs.readFileSync(conf.env.caCert),
 };
 
 const req = https.request(options, (res) => {

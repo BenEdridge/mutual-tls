@@ -1,3 +1,20 @@
+'use strict';
+
+const keyPathENV = process.env.KEY_PATH || './keys';
+
+const env = {
+  host: process.env.HOST || '127.0.0.1',
+  port: process.env.PORT || 8443,
+  keyPath: keyPathENV,
+  keySize: 2048,
+  caCert: `${keyPathENV}/CA.crt`,
+  serverKey: `${keyPathENV}/SERVER_key.pem`,
+  serverCert: `${keyPathENV}/SERVER.crt`,
+  clientKey: `${keyPathENV}/CLIENT_key.pem`,
+  clientCert: `${keyPathENV}/CLIENT.crt`,
+  clientCN: 'client_1',
+};
+
 const CA = {
   attrs: [
     {
@@ -61,7 +78,7 @@ const CA = {
         altNames: [
           {
             type: 6, // URI
-            value: 'http://example.org/webid#me'
+            value: 'http://localhost'
           },
           {
             type: 7, // IP
@@ -78,7 +95,7 @@ const CA = {
 const SERVER = {
   attrs: [{
     name: 'commonName',
-    value: 'localhost'
+    value: env.host
   }, {
     name: 'countryName',
     value: 'US'
@@ -90,17 +107,65 @@ const SERVER = {
     value: 'Blacksburg'
   }, {
     name: 'organizationName',
-    value: 'localhost'
+    value: env.host,
   }, {
     shortName: 'OU',
-    value: 'localhost'
-  }]
+    value: env.host
+  }],
+  extensions: [
+    {
+      name: 'basicConstraints',
+      cA: true
+    },
+    {
+      name: 'keyUsage',
+      keyCertSign: true,
+      digitalSignature: true,
+      nonRepudiation: true,
+      keyEncipherment: true,
+      dataEncipherment: true
+    },
+    {
+      name: 'extKeyUsage',
+      serverAuth: true,
+      clientAuth: true,
+      codeSigning: true,
+      emailProtection: true,
+      timeStamping: true
+    },
+    {
+      name: 'nsCertType',
+      client: true,
+      server: true,
+      email: true,
+      objsign: true,
+      sslCA: true,
+      emailCA: true,
+      objCA: true
+    },
+    {
+      name: 'subjectAltName',
+      altNames: [
+        {
+          type: 6, // URI
+          value: 'http://localhost'
+        },
+        {
+          type: 7, // IP
+          ip: '127.0.0.1'
+        }
+      ]
+    },
+    {
+      name: 'subjectKeyIdentifier'
+    }
+  ]
 };
 
 const CLIENT = {
   attrs: [{
     name: 'commonName',
-    value: 'client_1'
+    value: env.clientCN,
   }, {
     name: 'countryName',
     value: 'US'
@@ -115,7 +180,7 @@ const CLIENT = {
     value: 'test client'
   }, {
     shortName: 'OU',
-    value: 'client_1'
+    value: env.clientCN,
   }],
 };
 
@@ -123,4 +188,5 @@ module.exports = {
   CA,
   SERVER,
   CLIENT,
+  env,
 };

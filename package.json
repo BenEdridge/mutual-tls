@@ -9,19 +9,22 @@
     "type": "git",
     "url": "https://github.com/BenEdridge/Mutual_TLS.git"
   },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=10.x"
+  },
   "scripts": {
     "start:server": "node server.js",
     "start:server2": "node server_http2.js",
     "start:client": "node client.js",
     "start:client2": "node client_http2.js",
-    "generate:keys-openssl": "sh ./interactive_openssl_generator.sh",
     "generate:keys-forge": "node generator",
-    "generate:clean": "rm keys/*"
-  },
-  "dependencies": {
-    "express": "^4.17.1"
+    "generate:keys-openssl": "sh ./scripts/interactive_openssl_generator.sh",
+    "generate:clean": "rm keys/*",
+    "test": "tap"
   },
   "devDependencies": {
-    "node-forge": "^0.8.5"
+    "node-forge": "^0.8.5",
+    "tap": "^14.6.1"
   }
 }

@@ -1,12 +1,15 @@
+'use strict';
+
 const fs = require('fs');
 const http2 = require('http2');
+const config = require('./config');
 
 const options = {
-    key: fs.readFileSync('keys/CLIENT_key.pem'),
-    cert: fs.readFileSync('keys/CLIENT.crt'),
-    ca: fs.readFileSync('keys/CA.crt'),
+    key: fs.readFileSync(config.env.clientKey),
+    cert: fs.readFileSync(config.env.clientCert),
+    ca: fs.readFileSync(config.env.caCert),
     rejectUnauthorized: true,
-    serverName: 'localhost',
+    serverName: config.env.host,
     allowHTTP1: false,
 };
 
@@ -45,4 +48,6 @@ clientHttp2Session.on('frameError', (type, code, id) => {
   console.error('frameError', type, code, id);
 });
 
-clientHttp2Stream.on('error', (e) => console.error('error', e));
+clientHttp2Stream.on('error', (e) => {
+  console.error('error', e)
+});

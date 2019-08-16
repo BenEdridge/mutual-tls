@@ -1,31 +1,38 @@
+'use strict';
+
 const fs = require('fs');
 const https = require('https');
-const express = require('express');
-
-const app = express();
+const conf = require('./config');
 
 const options = {
-    key: fs.readFileSync('keys/SERVER_key.pem'),
-    cert: fs.readFileSync('keys/SERVER.crt'),
-    ca: fs.readFileSync('keys/CA.crt'),
+    key: fs.readFileSync(conf.env.serverKey),
+    cert: fs.readFileSync(conf.env.serverCert),
+    ca: fs.readFileSync(conf.env.caCert),
     requestCert: true,
     rejectUnauthorized: true, // if enabled you cannot do authentication based on client cert
     enableTrace: true, // Debug errors if required
-    passphrase: '1234' // Pass if SERVER_key.pem requires
+    passphrase: '123456', // Pass if SERVER_key.pem requires
 };
 
-app.use((req, res) => {
-    if(!req.client.authorized){
-        return res.status(401).send('ACCESS DENIED');
+const server = https.createServer(options).listen(conf.env.port, conf.env.host, () => {
+    console.log(`HTTPS server listening on ${server.address().address} and port: ${server.address().port}`);
+});
+
+server.on('secureConnection', (tlsSocket) => {
+    console.log('secureConnection');
+
+    if(!tlsSocket.authorized){
+        // return res.status(401).send('ACCESS DENIED');
+        return tlsSocket.write('DENIED');
     }
     // Examine the cert itself, and even validate based on that if required
-    const cert = req.socket.getPeerCertificate();
+    const cert = tlsSocket.getPeerCertificate();
     if (cert.subject) {
         console.log(`${cert.subject.CN} has logged in`);
     }
-    res.end('You have logged in\n');
+    tlsSocket.end('You have logged in');
 });
 
-const listener = https.createServer(options, app).listen(8443, () => {
-    console.log(`Express HTTPS server listening on port ${listener.address().port}`);
+server.on('tlsClientError', (err) => {
+    console.error('tlsClientError', err);
 });
