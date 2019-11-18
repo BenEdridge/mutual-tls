@@ -2,31 +2,41 @@
 
 A better and more complete example of Mutual TLS authentication in NodeJS
 
-- Use Firefox, Safari or Chrome to connect using a Client Certificate (See setup below)
-- NodeJS `client.js` connects to TLS server using supplied certificates
-- Generated certificates and keys in `keys` can be used with other clients and servers if required
+- Server and connecting Client in HTTP1/HTTP2
+- OpenSSL and Forge Certificate generation
+- Documentation for clients (Windows, Linux, OSX, Android)
+- Docker image for testing
 
 ## Getting Started
 
+Install, Generate Keys and Start server
 ```
 npm install
 npm run generate:keys-openssl
 npm run start:server
 ```
 
+Start client
 ```
-// Starts a client to connect to the server
 npm run start:client
+```
 
-// Remove keys
+Quick tests using curl and openssl
+```
+tests/curl.sh
+tests/openssl_client.sh
+```
+
+Remove keys
+```
 npm run generate:clean
 ```
 
+Docker:
 ```
-// Quick tests using curl and openssl
+docker pull docker.pkg.github.com/ben_edridge/mutual_tls/mutual_tls:latest
 
-tests/curl.sh
-tests/openssl_client.sh
+docker run -it mutual_tls:latest npm run start:server
 ```
 
 Connect your browser to: `localhost:8443` and you should be requested to supply a certificate or should connect automatically if the `CA` and `Client`
@@ -46,7 +56,7 @@ The generator script will create certificates and private keys in the `keys` dir
   - CLIENT_key.pem
   - SERVER_key.pem
 
-These certificates and keys need to be imported and loaded into the browser or operating system connecting your the server as below.
+These certificates and keys need to be imported and loaded into the browser or OS keychain:
 
 ### OSX
 
@@ -63,10 +73,18 @@ security import SERVER.crt -k ~/Library/Keychains/login.keychain
 
 Safari and Chrome should work once keys have been trusted and key preferences set to hostname.
 
-Firefox has it's own keystore that doesn't like PEM formatted keys are prefers p12 format.
+Firefox has it's own keystore that doesn't like PEM formatted keys and prefers p12 format.
 So you will need to import the `CLIENT.p12` file using the password from the generator output in the console.
 
+`about:preferences#privacy` then `view certificates`
+
 ### Linux
+
+CA import for Ubuntu
+
+1. Rename `CA.crt` and copy to `/usr/local/share/ca-certificates/`
+2. `chmod 644 CA.cr`
+3. Run `sudo update-ca-certificates`
 
 ### Android
 
@@ -74,6 +92,13 @@ So you will need to import the `CLIENT.p12` file using the password from the gen
 - Settings -> Security -> Device Administrator and Credentials -> Install from SD card etc.
 
 ### Windows
+
+```
+certutil -enterprise -f -v -AddStore "Root" <Cert File path>
+```
+
+See: 
+https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/certutil
 
 ## Resources
 - https://intown.biz/2016/11/22/node-client-auth/
