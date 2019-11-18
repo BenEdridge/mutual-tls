@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const https = require('https');
-const conf = require('./config');
+const conf = require('../config');
 
 const options = {
     key: fs.readFileSync(conf.env.serverKey),
@@ -14,25 +14,34 @@ const options = {
     passphrase: '123456', // Pass if SERVER_key.pem requires
 };
 
-const server = https.createServer(options).listen(conf.env.port, conf.env.host, () => {
-    console.log(`HTTPS server listening on ${server.address().address} and port: ${server.address().port}`);
-});
+const requestHandler = (req, res) => {
 
-server.on('secureConnection', (tlsSocket) => {
-    console.log('secureConnection');
+    const tlsSocket = req.socket;
+
+    console.log('Request from: ', req.connection.remoteAddress);
+    console.log('Authorized: ', tlsSocket.authorized);
 
     if(!tlsSocket.authorized){
-        // return res.status(401).send('ACCESS DENIED');
-        return tlsSocket.write('DENIED');
+        res.writeHead(401, 'ACCESS DENIED', { 'Content-Type': 'text/html' });
+        res.end();
     }
     // Examine the cert itself, and even validate based on that if required
     const cert = tlsSocket.getPeerCertificate();
     if (cert.subject) {
         console.log(`${cert.subject.CN} has logged in`);
     }
-    tlsSocket.end('You have logged in');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('Welcome to your secure mutual TLS website');
+};
+
+const server = https.createServer(options, requestHandler).listen(conf.env.port, conf.env.host, () => {
+    console.log(`HTTPS server listening on ${server.address().address} and port: ${server.address().port}`);
 });
 
 server.on('tlsClientError', (err) => {
     console.error('tlsClientError', err);
 });
+
+module.exports = {
+    server,
+}

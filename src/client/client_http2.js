@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const http2 = require('http2');
-const config = require('./config');
+const config = require('../config');
 
 const options = {
     key: fs.readFileSync(config.env.clientKey),
@@ -11,6 +11,7 @@ const options = {
     rejectUnauthorized: true,
     serverName: config.env.host,
     allowHTTP1: false,
+    minVersion: 'TLSv1.3'
 };
 
 let data = '';
@@ -21,7 +22,7 @@ const clientHttp2Stream = clientHttp2Session.request({
   ':path': '/' 
 });
 
-clientHttp2Stream.setEncoding('utf8');
+// clientHttp2Stream.setEncoding('utf8');
 
 clientHttp2Stream.on('response', (responseHeaders) => {
   console.log('Response headers:', JSON.stringify(responseHeaders));

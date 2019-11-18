@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const http2 = require('http2');
-const config = require('./config');
+const config = require('../config');
 
 const {
     HTTP2_HEADER_METHOD,
@@ -22,7 +22,10 @@ const options = {
     requestCert: true,
     rejectUnauthorized: true, // if enabled you cannot do authentication based on client cert
     enableTrace: true, // Debug errors if required
+    minVersion: 'TLSv1.3'
 };
+
+//https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
 
 const http2Server = http2.createSecureServer(options).listen(options.port, options.host, () => {
     console.log(`HTTPS/2 server listening on ${http2Server.address().address} and port ${http2Server.address().port}`);
@@ -75,3 +78,14 @@ http2Server.on('sessionError', (error) => console.error('sessionError:', error))
 http2Server.on('timeout', () => console.error('timeout'));
 
 http2Server.on('error', (error) => console.error('error:', error));
+
+process.on('unhandledRejection', (reason, p) => {
+    // I just caught an unhandled promise rejection, since we already have fallback handler for unhandled errors (see below), let throw and let him handle that
+    throw reason;
+  });
+
+process.on('uncaughtException', (error) => {
+    // Not good! An uncaught exception :(
+    console.error('uncaughtException', error)
+    process.exit(1);
+});

@@ -2,9 +2,11 @@
 
 const keyPathENV = process.env.KEY_PATH || './keys';
 
-const env = {
+const env = Object.freeze({
   host: process.env.HOST || '127.0.0.1',
   port: process.env.PORT || 8443,
+  enableHttp2: false,
+  onlyHttp2: false, // Only allows http2, http1 clients will fail
   keyPath: keyPathENV,
   keySize: 2048,
   caCert: `${keyPathENV}/CA.crt`,
@@ -13,9 +15,9 @@ const env = {
   clientKey: `${keyPathENV}/CLIENT_key.pem`,
   clientCert: `${keyPathENV}/CLIENT.crt`,
   clientCN: 'client_1',
-};
+});
 
-const CA = {
+const CA = Object.freeze({
   attrs: [
     {
       name: 'commonName',
@@ -90,9 +92,9 @@ const CA = {
         name: 'subjectKeyIdentifier'
       }
     ]
-};
+});
 
-const SERVER = {
+const SERVER = Object.freeze({
   attrs: [{
     name: 'commonName',
     value: env.host
@@ -160,9 +162,9 @@ const SERVER = {
       name: 'subjectKeyIdentifier'
     }
   ]
-};
+});
 
-const CLIENT = {
+const CLIENT = Object.freeze({
   attrs: [{
     name: 'commonName',
     value: env.clientCN,
@@ -182,7 +184,7 @@ const CLIENT = {
     shortName: 'OU',
     value: env.clientCN,
   }],
-};
+});
 
 module.exports = {
   CA,

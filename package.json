@@ -1,26 +1,29 @@
 {
   "name": "mutual_tls",
   "version": "1.0.0",
-  "description": "POC for Mutual TLS client and server in HTTP/1 and HTTP/2",
+  "description": "POC for Mutual TLS client and server",
   "author": "Ben",
   "license": "ISC",
-  "main": "server.js",
+  "main": "./src/server/server.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/BenEdridge/Mutual_TLS.git"
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=10.x"
+    "node": ">=12.x",
+    "npm": ">=6.12.x"
   },
   "scripts": {
-    "start:server": "node server.js",
-    "start:server2": "node server_http2.js",
-    "start:client": "node client.js",
-    "start:client2": "node client_http2.js",
-    "generate:keys-forge": "node generator",
-    "generate:keys-openssl": "sh ./scripts/interactive_openssl_generator.sh",
+    "start:server": "node ./src/server/server.js",
+    "start:client": "node ./src/client/client.js",
+    "start:server2": "node ./src/server/server_http2.js",
+    "start:client2": "node ./src/client/client_http2.js",
+    "generate:keys-forge": "node ./src/scripts/cert_generator",
+    "generate:keys-openssl": "sh ./src/scripts/interactive_openssl_generator.sh",
     "generate:clean": "rm keys/*",
+    "docker:build": "docker build -t mutual-tls:latest .",
+    "docker:run": "docker run -d --name mutual-tls -p 127.0.0.1:8443:8443 mutual-tls:latest",
     "test": "tap"
   },
   "devDependencies": {

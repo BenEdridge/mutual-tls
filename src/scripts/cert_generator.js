@@ -5,7 +5,7 @@ const forge = require('node-forge');
 const crypto = require('crypto');
 const pki = forge.pki;
 
-const { CA, SERVER, CLIENT, env } = require('./config');
+const { CA, SERVER, CLIENT, env } = require('../config');
 const PATH = env.keyPath;
 
 function buildCert(prefix, config, issuer, signer){
@@ -17,7 +17,7 @@ function buildCert(prefix, config, issuer, signer){
 
   // NOTE: serialNumber is the hex encoded value of an ASN.1 INTEGER.
   // Conforming CAs should ensure serialNumber is: no more than 20 octets,  non-negative (prefix a '00' if your value starts with a '1' bit)
-  cert.serialNumber = `00${crypto.pseudoRandomBytes(4).toString('hex')}`;
+  cert.serialNumber = `00${crypto.randomBytes(4).toString('hex')}`;
   cert.validity.notBefore = new Date();
   cert.validity.notAfter = new Date();
   cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
@@ -57,9 +57,9 @@ function buildCert(prefix, config, issuer, signer){
 
 function signCert(cert, keyPair, issuer = 'none', signer = 'none'){
   if(issuer === 'none' && signer === 'none') {
-    cert.sign(keyPair.privateKey);
+    cert.sign(keyPair.privateKey, forge.md.sha256.create());
   } else {
-    cert.sign(signer.privateKey);
+    cert.sign(signer.privateKey, forge.md.sha256.create());
   }
 }
 
