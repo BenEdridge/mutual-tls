@@ -32,11 +32,10 @@ Remove keys
 npm run generate:clean
 ```
 
-Docker:
+[Docker](https://github.com/BenEdridge/Mutual_TLS/packages/57880) image:
 ```
 docker pull docker.pkg.github.com/ben_edridge/mutual_tls/mutual_tls:latest
-
-docker run -it mutual_tls:latest npm run start:server
+docker run -d --name docker.pkg.github.com/ben_edridge/mutual_tls/mutual_tls:latest -p 127.0.0.1:8443:8443
 ```
 
 Connect your browser to: `localhost:8443` and you should be requested to supply a certificate or should connect automatically if the `CA` and `Client`
