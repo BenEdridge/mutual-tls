@@ -66,10 +66,12 @@ function signCert(cert, keyPair, issuer = 'none', signer = 'none'){
 function writeToFile(prefix, cert, keyPair){
 
   const pem = pki.certificateToPem(cert);
-
-  fs.writeFileSync(`${PATH}/${prefix}.crt`, pem, 'utf8');
-  fs.writeFileSync(`${PATH}/${prefix}_key.pem`, pki.privateKeyToPem(keyPair.privateKey), 'utf8');
-
+  try {
+    fs.writeFileSync(`${PATH}/${prefix}.crt`, pem, 'utf8');
+    fs.writeFileSync(`${PATH}/${prefix}_key.pem`, pki.privateKeyToPem(keyPair.privateKey), 'utf8');
+  } catch (e) {
+    console.error('Error writing files out', e);
+  }
   console.log('Output files',`${PATH}/${prefix}.crt`, ' and ', `${PATH}/${prefix}_key.pem`);
 }
 
@@ -81,6 +83,12 @@ function buildAndWriteP12(prefix, privateKey, cert, password){
   const der = forge.asn1.toDer(p12Asn1).getBytes();
   fs.writeFileSync(`${PATH}/${prefix}.p12`, der, 'binary');
   console.log('Output file',`${PATH}/${prefix}.p12 with PASSWORD: ${password}`);
+}
+
+try {
+  fs.mkdirSync(`${PATH}`);
+} catch (e) {
+  console.log("Key directory exists");
 }
 
 const dataCA = buildCert('CA', CA);
