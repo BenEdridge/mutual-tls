@@ -4,33 +4,36 @@ const fs = require('fs');
 const conf = require('../src/config');
 
 const options = {
-    hostname: conf.env.host,
-    port: conf.env.port,
-    path: '/',
-    key: fs.readFileSync(conf.env.clientKey),
-    cert: fs.readFileSync(conf.env.clientCert),
-    ca: fs.readFileSync(conf.env.caCert),
+  hostname: conf.env.host,
+  port: conf.env.port,
+  path: '/',
+  key: fs.readFileSync(conf.env.clientKey),
+  cert: fs.readFileSync(conf.env.clientCert),
+  ca: fs.readFileSync(conf.env.caCert),
 };
 
-const server = require('../src/server/server');
+const server = require('../src/server');
 
-tap.test('gets a 200 response', (t) => {
+tap.test('gets a successful response with valid certs', (t) => {
+
   const req = https.get(options, (res) => {
-    t.plan(1);
-    res.on('data', (data) => {
-        t.equal(data.toString(), 'Welcome to your secure mutual TLS website');
-        t.end();
-    }).on('error', (err) => {
-      t.fail('error');
+    let data = '';
+
+    res.on('data', (d) => {
+      data+=d;
+    });
+
+    res.on('close', () => {
+      t.equal(data.toString(), '<h1>Status:</h1><h2>Welcome client_1</h2>');
       t.end();
     });
+
   });
   req.end();
 });
 
 tap.test('throws an error for incorrect certs', (t) => {
   
-  t.plan(1);
   const badOptions = {
     hostname: conf.env.host,
     port: conf.env.port,
@@ -41,13 +44,14 @@ tap.test('throws an error for incorrect certs', (t) => {
   };
 
   const req = https.get(badOptions);
+
   req.on('error', (err) => {
-    t.equal(err.message, "certificate signature failure");
+    t.pass(err.message);
     t.end();
   });
   req.end();
 });
 
 tap.tearDown(() => {
-  server.server.close();
+  server.http2Server.close();
 })

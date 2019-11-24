@@ -3,7 +3,7 @@
 A better and more complete example of Mutual TLS authentication in NodeJS
 
 - Server and connecting Client in HTTP1/HTTP2
-- OpenSSL and Forge Certificate generation
+- Certificate generation using `OpenSSL` or `Forge` 
 - Documentation for clients (Windows, Linux, OSX, Android)
 - Docker image for testing
 

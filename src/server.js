@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const http2 = require('http2');
-const config = require('../config');
+const config = require('./config');
 
 const {
     HTTP2_HEADER_METHOD,
@@ -15,14 +15,15 @@ const {
 const options = {
     host: config.env.host,
     port: config.env.port,
-    allowHTTP1: false, // no downgrade to HTTP/1.x
+    allowHTTP1: true, // downgrade to http1
     key: fs.readFileSync(config.env.serverKey),
     cert: fs.readFileSync(config.env.serverCert),
     ca: fs.readFileSync(config.env.caCert),
     requestCert: true,
     rejectUnauthorized: true, // if enabled you cannot do authentication based on client cert
     enableTrace: true, // Debug errors if required
-    minVersion: 'TLSv1.3'
+    minVersion: 'TLSv1.2'
+    // passphrase: '123456', // Pass if SERVER_key.pem requires
 };
 
 //https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
@@ -33,29 +34,39 @@ const http2Server = http2.createSecureServer(options).listen(options.port, optio
 
 // Emitted each time there is a request. There may be multiple requests per session.
 http2Server.on('request',(req, res) => {
-    console.log('request: ', req.method, req.headers);
+    
+    console.log('Request from: ', req.connection.remoteAddress, req.method, req.headers);
+
     if(!req.socket.authorized){
         console.error('client auth error');
 
-        res.stream.respond({
-            [HTTP2_HEADER_STATUS]: 401,
-            [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
-        });
+        if(res.stream) {
+            res.stream.respond({
+                [HTTP2_HEADER_STATUS]: 401,
+                [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
+            });
+        }
 
         res.write('<h1>Status:</h1>');
         res.end('<h2>ACCESS DENIED</h2>');
+    } else {
+
+        // Examine the cert itself, and even validate based on that if required
+        const cert = req.socket.getPeerCertificate();
+        if (cert.subject) {
+            console.log(`${cert.subject.CN} has logged in`);
+        }
+
+        if(res.stream) {
+            res.stream.respond({
+                [HTTP2_HEADER_STATUS]: 200,
+                [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
+            });
+        }
+
+        res.write('<h1>Status:</h1>');
+        res.end(`<h2>Welcome ${cert.subject.CN}</h2>`);
     }
-    // Examine the cert itself, and even validate based on that if required
-    const cert = req.socket.getPeerCertificate();
-    console.log(`${cert.subject.CN} has logged in`);
-
-    res.stream.respond({
-        [HTTP2_HEADER_STATUS]: 200,
-        [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
-    });
-
-    res.write('<h1>Status:</h1>');
-    res.end(`<h2>Welcome ${cert.subject.CN}</h2>`);
 });
 
 // The 'session' event is emitted when a new Http2Session is created by the Http2Server.
@@ -85,7 +96,11 @@ process.on('unhandledRejection', (reason, p) => {
   });
 
 process.on('uncaughtException', (error) => {
-    // Not good! An uncaught exception :(
-    console.error('uncaughtException', error)
+    // Not good! An uncaught exception!
+    console.error('uncaughtException :/', error)
     process.exit(1);
 });
+
+module.exports = {
+    http2Server
+}

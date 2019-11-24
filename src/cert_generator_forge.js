@@ -5,7 +5,7 @@ const forge = require('node-forge');
 const crypto = require('crypto');
 const pki = forge.pki;
 
-const { CA, SERVER, CLIENT, env } = require('../config');
+const { CA, SERVER, CLIENT, env } = require('./config');
 const PATH = env.keyPath;
 
 function buildCert(prefix, config, issuer, signer){
