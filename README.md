@@ -1,5 +1,7 @@
 # Mutual TLS server and client in NodeJS
 
+![](https://github.com/BenEdridge/Mutual_TLS/workflows/CI/badge.svg)
+
 A better and more complete example of Mutual TLS authentication in NodeJS
 
 - Server and connecting Client in HTTP1/HTTP2
