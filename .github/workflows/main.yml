@@ -4,18 +4,22 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Setup NodeJS
       uses: actions/setup-node@v1.1.0
       with:
         node-version: '12.10.x'
-   
     - name: Build
       run: | 
         npm ci
         npm run generate:keys-forge
+    - name: Test
+      run: | 
         npm test
+    - name: Publish
+      run: | 
+        docker login docker.pkg.github.com -u benedridge -p {{ secrets.GITHUB_TOKEN }}
+        docker build -t docker.pkg.github.com/benedridge/mutual-tls/mutual-tls:latest .
+        docker push docker.pkg.github.com/benedridge/mutual-tls/mutual-tls:latest
