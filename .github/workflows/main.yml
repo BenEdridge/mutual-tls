@@ -20,8 +20,8 @@ jobs:
         npm test
     - name: Publish
       run: | 
-        docker login docker.pkg.github.com -u benedridge -p "${GITHUB_TOKEN}"
-        docker build -t docker.pkg.github.com/benedridge/mutual-tls/mutual-tls:latest .
-        docker push docker.pkg.github.com/benedridge/mutual-tls/mutual-tls:latest
+        docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" -p "${GITHUB_TOKEN}"
+        docker build -t "docker.pkg.github.com/${GITHUB_REPOSITORY}/mutual_tls:latest" .
+        docker push "docker.pkg.github.com/${GITHUB_REPOSITORY}/mutual_tls:latest"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
