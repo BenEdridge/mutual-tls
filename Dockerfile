@@ -1,4 +1,4 @@
-FROM node:buster-slim
+FROM node:alpine3.10
 WORKDIR /usr/src/app
 COPY . .
 RUN npm ci
