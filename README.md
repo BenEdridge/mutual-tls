@@ -1,6 +1,6 @@
 # Mutual TLS server and client in NodeJS
 
-![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/SSL.xcf/800px-SSL.xcf.png)
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/SSL.xcf/800px-SSL.xcf.png)  
 Nicobon [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
 
 ![](https://github.com/BenEdridge/Mutual_TLS/workflows/CI/badge.svg)
