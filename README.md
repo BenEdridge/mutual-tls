@@ -1,5 +1,8 @@
 # Mutual TLS server and client in NodeJS
 
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/SSL.xcf/800px-SSL.xcf.png)  
+Nicobon [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
+
 ![](https://github.com/BenEdridge/Mutual_TLS/workflows/CI/badge.svg)
 
 A better and more complete example of Mutual TLS authentication in NodeJS
@@ -111,3 +114,7 @@ https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/
 - https://engineering.circle.com/https-authorized-certs-with-node-js-315e548354a2
 - https://gist.github.com/pcan/e384fcad2a83e3ce20f9a4c33f4a13ae
 
+## Attributions
+
+Social media image:
+Nicobon [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]

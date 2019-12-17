@@ -11,17 +11,24 @@ jobs:
       uses: actions/setup-node@v1.1.0
       with:
         node-version: '12.10.x'
-    - name: Build
-      run: | 
+    - name: Run Tests
+      run: |
         npm ci
         npm run generate:keys-forge
-    - name: Test
-      run: | 
         npm test
-    - name: Publish
+    - name: Publish Image
       run: | 
         docker login docker.pkg.github.com -u "${GITHUB_ACTOR}" -p "${GITHUB_TOKEN}"
         docker build -t "docker.pkg.github.com/benedridge/mutual_tls/mutual_tls:latest" .
         docker push "docker.pkg.github.com/benedridge/mutual_tls/mutual_tls:latest"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+    - name: Deploy to Heroku
+      run: |
+        echo "Deploying to Heroku"
+#         docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+#         docker tag docker.pkg.github.com/ebsone/ci-test-mr/webapplication1corenew:latest registry.heroku.com/ci-test-mr/web
+#         docker push registry.heroku.com/ci-test-mr/web
+#         heroku container:release web -a ci-test-mr
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
