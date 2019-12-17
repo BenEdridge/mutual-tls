@@ -5,8 +5,11 @@ const keyPathENV = process.env.KEY_PATH || './keys';
 const env = Object.freeze({
   host: process.env.HOST || '127.0.0.1',
   port: process.env.PORT || 8443,
+  rejectUnauthorized: true,
   enableHttp2: false,
-  onlyHttp2: false, // Only allows http2, http1 clients will fail
+  onlyHttp2: false,
+  allowHTTP1: true,
+  minVersion: 'TLSv1.2',
   keyPath: keyPathENV,
   keySize: 2048,
   caCert: `${keyPathENV}/CA.crt`,

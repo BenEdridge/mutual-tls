@@ -5,8 +5,6 @@ const http2 = require('http2');
 const config = require('./config');
 
 const {
-    HTTP2_HEADER_METHOD,
-    HTTP2_HEADER_PATH,
     HTTP2_HEADER_STATUS,
     HTTP2_HEADER_CONTENT_TYPE
 } = http2.constants;
@@ -15,40 +13,34 @@ const {
 const options = {
     host: config.env.host,
     port: config.env.port,
-    allowHTTP1: true, // downgrade to http1
+    allowHTTP1: config.env.allowHTTP1, // downgrade to http1 
     key: fs.readFileSync(config.env.serverKey),
     cert: fs.readFileSync(config.env.serverCert),
     ca: fs.readFileSync(config.env.caCert),
     requestCert: true,
-    rejectUnauthorized: true, // if enabled you cannot do authentication based on client cert
+    rejectUnauthorized: config.env.rejectUnauthorized, // if enabled you cannot do authentication based on client cert
     enableTrace: true, // Debug errors if required
-    minVersion: 'TLSv1.2'
+    minVersion: config.env.minVersion,
     // passphrase: '123456', // Pass if SERVER_key.pem requires
 };
 
 //https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
-
 const http2Server = http2.createSecureServer(options).listen(options.port, options.host, () => {
     console.log(`HTTPS/2 server listening on ${http2Server.address().address} and port ${http2Server.address().port}`);
 });
 
 // Emitted each time there is a request. There may be multiple requests per session.
-http2Server.on('request',(req, res) => {
-    
+http2Server.on('request', (req, res) => {
     console.log('Request from: ', req.connection.remoteAddress, req.method, req.headers);
+    
+    res.write('<h1>Status:</h1>');
 
-    if(!req.socket.authorized){
+    if (!req.socket.authorized) {
+
         console.error('client auth error');
-
-        if(res.stream) {
-            res.stream.respond({
-                [HTTP2_HEADER_STATUS]: 401,
-                [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
-            });
-        }
-
-        res.write('<h1>Status:</h1>');
+        streamResponder(res.stream, 401);
         res.end('<h2>ACCESS DENIED</h2>');
+
     } else {
 
         // Examine the cert itself, and even validate based on that if required
@@ -56,18 +48,19 @@ http2Server.on('request',(req, res) => {
         if (cert.subject) {
             console.log(`${cert.subject.CN} has logged in`);
         }
-
-        if(res.stream) {
-            res.stream.respond({
-                [HTTP2_HEADER_STATUS]: 200,
-                [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
-            });
-        }
-
-        res.write('<h1>Status:</h1>');
+        streamResponder(res.stream, 200);
         res.end(`<h2>Welcome ${cert.subject.CN}</h2>`);
     }
 });
+
+const streamResponder = (stream, statusCode = 200) => {
+    if(stream) {
+        stream.respond({
+            [HTTP2_HEADER_STATUS]: statusCode,
+            [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
+        });
+    }
+}
 
 // The 'session' event is emitted when a new Http2Session is created by the Http2Server.
 http2Server.on('session', (session) => {
@@ -90,13 +83,11 @@ http2Server.on('timeout', () => console.error('timeout'));
 
 http2Server.on('error', (error) => console.error('error:', error));
 
-process.on('unhandledRejection', (reason, p) => {
-    // I just caught an unhandled promise rejection, since we already have fallback handler for unhandled errors (see below), let throw and let him handle that
-    throw reason;
-  });
+// I just caught an unhandled promise rejection, since we already have fallback handler for unhandled errors (see below), let throw and let him handle that
+process.on('unhandledRejection', (reason, p) => { throw reason; });
 
+// Not good! An uncaught exception!
 process.on('uncaughtException', (error) => {
-    // Not good! An uncaught exception!
     console.error('uncaughtException :/', error)
     process.exit(1);
 });

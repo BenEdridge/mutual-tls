@@ -1,7 +1,7 @@
 {
   "name": "mutual_tls",
   "version": "1.0.0",
-  "description": "POC for Mutual TLS client and server",
+  "description": "Mutual TLS client and server",
   "author": "Ben",
   "license": "ISC",
   "main": "./src/server.js",
