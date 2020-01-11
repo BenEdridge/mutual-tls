@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const http2 = require('http2');
+const websockets = require('ws');
 const config = require('./config');
 
 const {
@@ -26,13 +27,50 @@ const options = {
 
 //https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
 const http2Server = http2.createSecureServer(options).listen(options.port, options.host, () => {
-    console.log(`HTTPS/2 server listening on ${http2Server.address().address} and port ${http2Server.address().port}`);
+    console.log(`HTTPS/2 and Websocket server listening on ${http2Server.address().address} and port ${http2Server.address().port}`);
+});
+
+// Websockets setup making use of the http2Server
+const wss = new websockets.Server({
+    server: http2Server,
+});
+
+wss.on('connection', function connection(ws) {
+    console.info('### connection received', ws.authorized);
+
+    ws.on('message', function incoming(message) {
+        console.log('Server Received: %s', message);
+    });
+
+    ws.on('upgrade', (message) => {
+        console.info(message);
+    });
+
+    ws.on('close', (code, reason) => {
+        console.info('websocket closed', code, reason);
+    });
+
+    ws.on('error', (e) => {
+        console.error('error', e);
+        ws.send(e);
+    });
+
+    ws.on('unexpected-response', (req, response) => {
+        console.error(req, response);
+        ws.send(e);
+    });
+
+    ws.send('Welcome to Mutual-TLS Websockets!');
+});
+
+wss.on('error', (e) => {
+    console.error('websocket server error', e)
 });
 
 // Emitted each time there is a request. There may be multiple requests per session.
 http2Server.on('request', (req, res) => {
     console.log('Request from: ', req.connection.remoteAddress, req.method, req.headers);
-    
+
     res.write('<h1>Status:</h1>');
 
     if (!req.socket.authorized) {
@@ -54,7 +92,7 @@ http2Server.on('request', (req, res) => {
 });
 
 const streamResponder = (stream, statusCode = 200) => {
-    if(stream) {
+    if (stream) {
         stream.respond({
             [HTTP2_HEADER_STATUS]: statusCode,
             [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',

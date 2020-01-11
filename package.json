@@ -18,6 +18,7 @@
     "start:server": "node ./src/server.js",
     "start:client": "HTTP_VER=1 node ./src/client.js",
     "start:client2": "HTTP_VER=2 node ./src/client.js",
+    "start:clientwss": "node ./src/client_wss.js",
     "generate:keys-forge": "node ./src/cert_generator_forge.js",
     "generate:keys-openssl": "sh ./src/scripts/cert_generator_openssl.sh",
     "generate:clean": "rm keys/*",
@@ -28,5 +29,8 @@
   "devDependencies": {
     "node-forge": "^0.8.5",
     "tap": "^14.6.1"
+  },
+  "dependencies": {
+    "ws": "^7.2.1"
   }
 }
