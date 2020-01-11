@@ -5,12 +5,13 @@ Nicobon [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
 
 ![](https://github.com/BenEdridge/Mutual_TLS/workflows/CI/badge.svg)
 
-A better and more complete example of Mutual TLS authentication in NodeJS
+A better and more complete example of Mutual TLS authentication in NodeJS for HTTPS and WebSockets
 
-- Server and connecting Client in HTTP1/HTTP2
+- Server and Client in HTTP1/HTTP2
 - Certificate generation using `OpenSSL` or `Forge` 
 - Documentation for clients (Windows, Linux, OSX, Android)
 - Docker image for testing
+- No library bloat (3 Libraries)
 
 ## Getting Started
 
@@ -32,8 +33,11 @@ Connect
 ```
 npm run start:server
 
-# Connect to the above locally
+# Connect to the above locally via HTTP2
 npm run start:client2
+
+# Connect via WebSockets
+npm run start:clientwss
 ```
 
 ## Docker
