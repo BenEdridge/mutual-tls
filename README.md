@@ -11,7 +11,7 @@ A better and more complete example of Mutual TLS authentication in NodeJS for HT
 - Certificate generation using `OpenSSL` or `Forge` 
 - Documentation for clients (Windows, Linux, OSX, Android)
 - Docker image for testing
-- No library bloat (3 Libraries)
+- No library bloat (1 dependency, 2 dev dependencies)
 
 ## Getting Started
 

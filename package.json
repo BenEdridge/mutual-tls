@@ -23,14 +23,16 @@
     "generate:keys-openssl": "sh ./src/scripts/cert_generator_openssl.sh",
     "generate:clean": "rm keys/*",
     "docker:build": "docker build -t mutual-tls:latest .",
-    "docker:run": "docker run -d --name mutual-tls -p 127.0.0.1:8443:8443 mutual-tls:latest",
+    "docker:run:server": "docker run -d --name mutual-tls-server mutual-tls:latest npm run start:server",
+    "docker:run:client": "docker run -i --rm --network container:mutual-tls-server --name mutual-tls-client mutual-tls:latest npm run start:client",
+    "test:e2e": "npm run docker:run:server && npm run docker:run:client",
     "test": "tap"
   },
   "devDependencies": {
-    "node-forge": "^0.8.5",
-    "tap": "^14.6.1"
+    "node-forge": "^0.9.1",
+    "tap": "^14.10.6"
   },
   "dependencies": {
-    "ws": "^7.2.1"
+    "ws": "^7.2.3"
   }
 }
