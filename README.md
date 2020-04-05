@@ -44,8 +44,8 @@ npm run start:clientwss
 
 [Docker](https://github.com/BenEdridge/Mutual_TLS/packages/57880) image:
 ```
-docker pull docker.pkg.github.com/benedridge/mutual_tls/mutual_tls:latest
-docker run --name mutual_tls -p 127.0.0.1:8443:8443 -d docker.pkg.github.com/benedridge/mutual_tls/mutual_tls:latest
+docker pull docker.pkg.github.com/benedridge/mutual-tls/mutual-tls:latest
+docker run --name mutual_tls -p 127.0.0.1:8443:8443 -d docker.pkg.github.com/benedridge/mutual-tls/mutual-tls:latest
 ```
 
 ## Keys and Certificates
