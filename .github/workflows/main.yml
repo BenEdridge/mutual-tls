@@ -15,8 +15,10 @@ jobs:
       uses: actions/setup-node@v1.1.0
       with:
         node-version: "${{ steps.nvm.outputs.NVMRC }}"
+        version: "12.x"
     - name: Run Tests
       run: |
+        node --version
         npm ci
         npm run generate:keys-forge
         npm test

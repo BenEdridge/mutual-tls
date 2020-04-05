@@ -36,8 +36,7 @@ const wss = new websockets.Server({
 });
 
 wss.on('connection', function connection(ws) {
-  console.info('### connection received', ws.authorized);
-
+  
   ws.on('message', function incoming(message) {
     console.log('Server Received: %s', message);
   });
