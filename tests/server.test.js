@@ -61,8 +61,8 @@ tap.test('http/2 gets a successful response with valid certs', (t) => {
 
   clientHttp2Stream.on('end', () => {
     t.equal(data.toString(), '<h1>Status:</h1><h2>Welcome client_1</h2>');
-    clientHttp2Session.close();
     t.end();
+    clientHttp2Session.close();
   });
 });
 
@@ -72,8 +72,8 @@ tap.test('wss gets a successful response with valid certs', (t) => {
 
   ws.on('message', (data) => {
     t.equal(data.toString(), 'Welcome to Mutual-TLS Websockets!');
-    ws.close();
     t.end();
+    ws.close();
   });
 });
 
@@ -93,8 +93,8 @@ tap.test('http1 throws an error for incorrect certs', (t) => {
   req.on('error', (error) => {
     t.equal(error.toString(), 'Error: certificate signature failure');
     t.end();
+    req.end();
   });
-  req.end();
 });
 
 tap.test('wss throws an error for incorrect certs', (t) => {
@@ -108,13 +108,13 @@ tap.test('wss throws an error for incorrect certs', (t) => {
     ca: fs.readFileSync('./tests/bad_keys/CA.crt'),
   };
 
-  const ws = new websocket(`wss://$localhost:${options.port}`, badOptions);
+  const ws = new websocket(`wss://localhost:${options.port}`, badOptions);
 
   ws.on('error', (error) => {
-    t.equal(error.toString(), 'Error: WebSocket was closed before the connection was established');
+    t.equal(error.toString(), 'Error: certificate signature failure');
     t.end();
+    ws.close();
   })
-  ws.close();
 });
 
 tap.tearDown(() => {
