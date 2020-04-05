@@ -5,7 +5,7 @@ const websocket = require('ws');
 const config = require('./config');
 
 const options = {
-  hostname: config.env.host,
+  host: config.env.host,
   port: config.env.port,
   key: fs.readFileSync(config.env.clientKey),
   cert: fs.readFileSync(config.env.clientCert),
@@ -16,7 +16,7 @@ const options = {
   minVersion: config.env.minVersion
 };
 
-const ws = new websocket('wss://localhost:8443', options);
+const ws = new websocket(`wss://${options.host}:${options.port}`, options);
 
 ws.on('open', () => {
   ws.send('hello');

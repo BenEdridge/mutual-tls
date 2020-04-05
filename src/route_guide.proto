@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package routeguide;
+
+service RouteGuide {
+    rpc message(DataRequest) returns (DataResponse);
+}
+
+message DataRequest {
+    Data data = 1;
+}
+
+message DataResponse {
+    Data data = 2;
+}
+
+message Data {
+    string message = 1;
+}

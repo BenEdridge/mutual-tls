@@ -1,17 +1,17 @@
-# Mutual TLS server and client in NodeJS
+# Mutual TLS client and server in NodeJS
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/SSL.xcf/800px-SSL.xcf.png)  
 Nicobon [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
 
 ![](https://github.com/BenEdridge/Mutual_TLS/workflows/CI/badge.svg)
 
-A better and more complete example of Mutual TLS authentication in NodeJS for HTTPS and WebSockets
+A better and more complete example of Mutual TLS authentication in NodeJS for HTTPS, WebSockets and gRPC
 
-- Server and Client in HTTP1/HTTP2
+- Server and Clients in HTTP1/HTTP2, WebSockets and gRPC
 - Certificate generation using `OpenSSL` or `Forge` 
 - Documentation for clients (Windows, Linux, OSX, Android)
 - Docker image for testing
-- No library bloat (1 dependency, 2 dev dependencies)
+- No library bloat
 
 ## Getting Started
 

@@ -4,7 +4,7 @@
   "description": "Mutual TLS client and server",
   "author": "Ben",
   "license": "ISC",
-  "main": "./src/server.js",
+  "main": "./src/server_http.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/BenEdridge/Mutual_TLS.git"
@@ -15,10 +15,12 @@
     "npm": ">=6.12.x"
   },
   "scripts": {
-    "start:server": "node ./src/server.js",
-    "start:client": "HTTP_VER=1 node ./src/client.js",
-    "start:client2": "HTTP_VER=2 node ./src/client.js",
+    "start:server": "node ./src/server_http.js",
+    "start:server_grpc": "node ./src/server_grpc.js",
+    "start:client": "HTTP_VER=1 node ./src/client_http.js",
+    "start:client2": "HTTP_VER=2 node ./src/client_http.js",
     "start:clientwss": "node ./src/client_wss.js",
+    "start:client_grpc": "node ./src/client_grpc.js",
     "generate:keys-forge": "node ./src/cert_generator_forge.js",
     "generate:keys-openssl": "sh ./src/scripts/cert_generator_openssl.sh",
     "generate:clean": "rm keys/*",
@@ -30,9 +32,11 @@
   },
   "devDependencies": {
     "node-forge": "^0.9.1",
-    "tap": "^14.10.6"
+    "tap": "^14.10.7"
   },
   "dependencies": {
+    "@grpc/proto-loader": "^0.5.4",
+    "grpc": "^1.24.2",
     "ws": "^7.2.3"
   }
 }
