@@ -92,9 +92,13 @@ tap.test('http1 throws an error for incorrect certs', (t) => {
 
   req.on('error', (error) => {
     t.equal(error.toString(), 'Error: certificate signature failure');
-    t.end();
-    req.end();
+    // t.end();
   });
+
+  req.on('close', () => {
+      req.end();
+      t.end();
+  })
 });
 
 tap.test('wss throws an error for incorrect certs', (t) => {
@@ -110,11 +114,14 @@ tap.test('wss throws an error for incorrect certs', (t) => {
 
   const ws = new websocket(`wss://localhost:${options.port}`, badOptions);
 
-  ws.on('error', (error) => {
-    t.equal(error.toString(), 'Error: certificate signature failure');
-    t.end();
-    ws.close();
-  })
+    ws.on('error', (error) => {
+      t.equal(error.toString(), 'Error: certificate signature failure');
+      ws.close();
+    })
+
+    ws.on('close', () => {
+      t.end();
+    });
 });
 
 tap.tearDown(() => {
