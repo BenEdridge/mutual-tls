@@ -1,5 +1,4 @@
 // See: https://grpc.io/docs/quickstart/node/
-
 'use strict';
 
 const fs = require('fs');
@@ -60,6 +59,16 @@ gRPCServer.bind(`${options.host}:${options.port}`, credentials);
 gRPCServer.start();
 
 console.log(`gRPC server listening on ${options.host} and port ${options.port}`);
+
+
+// I just caught an unhandled promise rejection, since we already have fallback handler for unhandled errors (see below), let throw and let him handle that
+process.on('unhandledRejection', (reason, p) => { throw reason });
+
+// Not good! An uncaught exception!
+process.on('uncaughtException', (error) => {
+  console.error('uncaughtException :/', error)
+  process.exit(1);
+});
 
 module.exports = {
   gRPCServer

@@ -24,3 +24,24 @@ ws.on('open', () => {
 ws.on('message', (data) => {
   console.info(data);
 });
+
+ws.on('unexpected-response', (req, res) => {
+  console.info('unexpected-response', req, res);
+});
+
+ws.on('close', (code, reason) => {
+  console.info('WebSocket closed', code, reason);
+});
+
+ws.on('error', (error) => {
+  console.error(error);
+});
+
+// I just caught an unhandled promise rejection, since we already have fallback handler for unhandled errors (see below), let throw and let him handle that
+process.on('unhandledRejection', (reason, p) => { throw reason });
+
+// Not good! An uncaught exception!
+process.on('uncaughtException', (error) => {
+  console.error('uncaughtException :/', error)
+  process.exit(1);
+});

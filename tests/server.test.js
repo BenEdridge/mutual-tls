@@ -1,3 +1,5 @@
+'use strict';
+
 const tap = require('tap');
 const https = require('https');
 const http2 = require('http2');

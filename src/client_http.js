@@ -18,8 +18,10 @@ const options = {
 };
 
 if (process.env.HTTP_VER === "1") {
+
   const req = https.request(options, (res) => {
     res.on('data', (data) => console.log(data.toString()));
+    res.on('error', (error) => console.error(error));
   });
 
   req.on('error', (e) => console.error(e));
@@ -43,13 +45,15 @@ if (process.env.HTTP_VER === "1") {
   });
 
   clientHttp2Stream.on('end', () => {
-    console.log('End:', data);
+    console.log('Stream End:', data);
     clientHttp2Session.close();
   });
 
+  clientHttp2Stream.on('error', (e) => console.error('Stream Error', e));
+
   clientHttp2Session.on('close', () => console.log('Session closed'));
-  clientHttp2Session.on('frameError', (type, code, id) => console.error('frameError', type, code, id));
-  clientHttp2Stream.on('error', (e) => console.error('error', e));
+  clientHttp2Session.on('error', (error) => console.error('Session Error', error));
+  clientHttp2Session.on('frameError', (type, code, id) => console.error('Session frameError', type, code, id));
 
 } else {
   console.error('Failed to start, set HTTP_VER=1 or HTTP_VER=2');

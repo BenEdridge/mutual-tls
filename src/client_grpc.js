@@ -50,3 +50,12 @@ client.message(request, (error, response) => {
   }
   console.log(`gRPC Server response: ${JSON.stringify(response)}`);
 });
+
+// I just caught an unhandled promise rejection, since we already have fallback handler for unhandled errors (see below), let throw and let him handle that
+process.on('unhandledRejection', (reason, p) => { throw reason });
+
+// Not good! An uncaught exception!
+process.on('uncaughtException', (error) => {
+  console.error('uncaughtException :/', error)
+  process.exit(1);
+});
