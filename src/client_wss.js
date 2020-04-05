@@ -11,12 +11,11 @@ const options = {
   cert: fs.readFileSync(config.env.clientCert),
   ca: fs.readFileSync(config.env.caCert),
   rejectUnauthorized: config.env.rejectUnauthorized,
-  serverName: config.env.host,
   allowHTTP1: config.env.allowHTTP1,
   minVersion: config.env.minVersion
 };
 
-const ws = new websocket(`wss://${options.host}:${options.port}`, options);
+const ws = new websocket(`wss://localhost:${options.port}`, options);
 
 ws.on('open', () => {
   ws.send('hello');

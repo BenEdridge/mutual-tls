@@ -13,7 +13,6 @@ const options = {
   cert: fs.readFileSync(config.env.clientCert),
   ca: fs.readFileSync(config.env.caCert),
   rejectUnauthorized: config.env.rejectUnauthorized,
-  serverName: config.env.host,
   allowHTTP1: config.env.allowHTTP1,
   minVersion: config.env.minVersion
 };
@@ -44,8 +43,7 @@ if (process.env.HTTP_VER === "1") {
   });
 
   clientHttp2Stream.on('end', () => {
-    console.log('end:');
-    console.log('Final data:', data);
+    console.log('End:', data);
     clientHttp2Session.close();
   });
 

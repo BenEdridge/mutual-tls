@@ -20,7 +20,7 @@ const options = {
   ca: fs.readFileSync(config.env.caCert),
   requestCert: true,
   rejectUnauthorized: config.env.rejectUnauthorized, // if enabled you cannot do authentication based on client cert
-  enableTrace: true, // Debug errors if required
+  // enableTrace: true, // Debug errors if required
   minVersion: config.env.minVersion,
   // passphrase: '123456', // Pass if SERVER_key.pem requires
 };
@@ -57,7 +57,6 @@ wss.on('connection', function connection(ws) {
 
   ws.on('unexpected-response', (req, response) => {
     console.error(req, response);
-    ws.send(e);
   });
 
   ws.send('Welcome to Mutual-TLS Websockets!');
@@ -71,14 +70,13 @@ wss.on('error', (e) => {
 http2Server.on('request', (req, res) => {
   console.log('Request from: ', req.connection.remoteAddress, req.method, req.headers);
 
-  res.write('<h1>Status:</h1>');
+  res.setHeader('Content-Type', 'text/html');
 
   if (!req.socket.authorized) {
-
     console.error('client auth error');
+    // res.writeHead(401);
     streamResponder(res.stream, 401);
-    res.end('<h2>ACCESS DENIED</h2>');
-
+    res.end('<h1>Status:</h1><h2>ACCESS DENIED</h2>');
   } else {
 
     // Examine the cert itself, and even validate based on that if required
@@ -86,8 +84,9 @@ http2Server.on('request', (req, res) => {
     if (cert.subject) {
       console.log(`${cert.subject.CN} has logged in`);
     }
+    // res.writeHead(200);
     streamResponder(res.stream, 200);
-    res.end(`<h2>Welcome ${cert.subject.CN}</h2>`);
+    res.end(`<h1>Status:</h1><h2>Welcome ${cert.subject.CN}</h2>`);
   }
 });
 
@@ -106,6 +105,16 @@ http2Server.on('session', (session) => {
   // console.log('session cert subject CN: ', session.socket.getPeerCertificate().subject.CN);
   console.log('session socket protocol: ', session.socket.getProtocol());
 });
+
+http2Server.on('stream', (stream, statusCode = 200) => {
+  if(!stream.headersSent){
+    console.log('Sending headers')
+    stream.respond({
+      [HTTP2_HEADER_STATUS]: statusCode,
+      [HTTP2_HEADER_CONTENT_TYPE]: 'text/html',
+    });
+  }
+})
 
 // The 'unknownProtocol' event is emitted when a connecting client fails to negotiate an allowed protocol (i.e. HTTP/2 or HTTP/1.1).
 http2Server.on('unknownProtocol', (tlsSocket) => {
