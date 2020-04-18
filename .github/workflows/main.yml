@@ -18,9 +18,8 @@ jobs:
         version: "12.x"
     - name: Run Tests
       run: |
-        node --version
+        echo "node version:" && node --version
         npm ci
-        npm run generate:keys-forge
         npm test
     - name: Publish Image
       run: | 
