@@ -13,18 +13,18 @@ const badOptions = {
   ca: fs.readFileSync('./tests/bad_keys/CA.crt'),
 };
 
-const wss = require('../src/server_wss').init();
+const {http2Server, wss} = require('../src/server_wss').init();
 
-// tap.test('WebSocket gets a successful response with valid certs', (t) => {
+tap.test('WebSocket gets a successful response with valid certs', (t) => {
 
-//   const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, config.clientConfig);
+  const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, config.clientConfig);
 
-//   ws.on('message', (data) => {
-//     t.equal(data.toString(), 'Welcome to Mutual-TLS Websockets!');
-//     ws.terminate(); // immediately close
-//     t.end();
-//   });
-// });
+  ws.on('message', (data) => {
+    t.equal(data.toString(), 'Welcome to Mutual-TLS Websockets!');
+    ws.terminate(); // immediately close
+    t.end();
+  });
+});
 
 tap.test('WebSocket returns an error for invalid certs', (t) => {
   const ws = new websocket(`wss://127.0.0.1:8443`, badOptions);
@@ -51,6 +51,6 @@ tap.test('WebSocket returns an error for invalid certs', (t) => {
 });
 
 tap.tearDown(() => {
-  wss.removeAllListeners();
+  http2Server.close();
   wss.close();
 });

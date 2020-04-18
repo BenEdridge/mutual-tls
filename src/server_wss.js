@@ -46,7 +46,7 @@ const init = () => {
     console.error('websocket server error', e)
   });
 
-  return wss;
+  return {http2Server, wss};
 };
 
 module.exports = {
