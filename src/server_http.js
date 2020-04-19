@@ -1,7 +1,7 @@
 'use strict';
 
 const http2 = require('http2');
-const options = require('./config').serverConfig;
+const options = require('./config').serverConfig();
 
 const {
   HTTP2_HEADER_STATUS,

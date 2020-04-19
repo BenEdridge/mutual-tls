@@ -2,7 +2,7 @@
 
 const http2 = require('http2');
 const websockets = require('ws');
-const options = require('./config').serverConfig;
+const options = require('./config').serverConfig();
 
 const http2secureServer = http2.createSecureServer(options);
 

@@ -221,6 +221,6 @@ module.exports = {
   SERVER,
   CLIENT,
   certConfig,
-  clientConfig: buildClientConfig(),
-  serverConfig: buildServerConfig(),
+  clientConfig: buildClientConfig,
+  serverConfig: buildServerConfig,
 };

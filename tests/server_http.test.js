@@ -4,13 +4,13 @@ const tap = require('tap');
 const https = require('https');
 const http2 = require('http2');
 const fs = require('fs');
-const config = require('../src/config');
+const config = require('../src/config').clientConfig();
 
 const server = require('../src/server_http');
 
 const badOptions = {
-  host: config.clientConfig.host,
-  port: config.clientConfig.port,
+  host: config.host,
+  port: config.port,
   key: fs.readFileSync('./tests/bad_keys/CLIENT_key.pem'),
   cert: fs.readFileSync('./tests/bad_keys/CLIENT.crt'),
   ca: fs.readFileSync('./tests/bad_keys/CA.crt'),
@@ -20,7 +20,7 @@ const httpServer = server.init();
 
 tap.test('http/1 gets a successful response with valid certs', (t) => {
 
-  const req = https.get(config.clientConfig, (res) => {
+  const req = https.get(config, (res) => {
     let data = '';
 
     res.on('data', (d) => {
@@ -38,7 +38,7 @@ tap.test('http/1 gets a successful response with valid certs', (t) => {
 
 tap.test('http/2 gets a successful response with valid certs', (t) => {
 
-  const clientHttp2Session = http2.connect(`https://${config.clientConfig.host}:${config.clientConfig.port}`, config.clientConfig);
+  const clientHttp2Session = http2.connect(`https://${config.host}:${config.port}`, config);
   const clientHttp2Stream = clientHttp2Session.request();
 
   let data = '';
@@ -101,7 +101,7 @@ tap.test('http/1 returns an error for missing cert, ca and key', (t) => {
 
 tap.test('http/2 returns an error for invalid certs', (t) => {
 
-  const clientHttp2Session = http2.connect(`https://${config.clientConfig.host}:${config.clientConfig.port}`, badOptions);
+  const clientHttp2Session = http2.connect(`https://${config.host}:${config.port}`, badOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);
@@ -121,7 +121,7 @@ tap.test('http/2 returns an error for missing certs', (t) => {
   // omit cert
   const { cert, ca, key, ...missingClientOptions } = badOptions;
 
-  const clientHttp2Session = http2.connect(`https://${config.clientConfig.host}:${config.clientConfig.port}`, missingClientOptions);
+  const clientHttp2Session = http2.connect(`https://${config.host}:${config.port}`, missingClientOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);

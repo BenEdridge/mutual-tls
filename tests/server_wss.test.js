@@ -3,11 +3,11 @@
 const tap = require('tap');
 const websocket = require('ws');
 const fs = require('fs');
-const config = require('../src/config');
+const config = require('../src/config').clientConfig();
 
 const badOptions = {
-  host: config.clientConfig.host,
-  port: config.clientConfig.port,
+  host: config.host,
+  port: config.port,
   key: fs.readFileSync('./tests/bad_keys/CLIENT_key.pem'),
   cert: fs.readFileSync('./tests/bad_keys/CLIENT.crt'),
   ca: fs.readFileSync('./tests/bad_keys/CA.crt'),
@@ -17,7 +17,7 @@ const { http2Server, wss } = require('../src/server_wss').init();
 
 tap.test('WebSocket gets a successful response with valid certs', (t) => {
 
-  const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, config.clientConfig);
+  const ws = new websocket(`wss://${config.host}:${config.port}`, config);
 
   ws.on('message', (data) => {
     t.equal(data.toString(), 'Welcome to Mutual-TLS Websockets!');
@@ -28,7 +28,7 @@ tap.test('WebSocket gets a successful response with valid certs', (t) => {
 
 tap.test('WebSocket returns an error for invalid certs', (t) => {
 
-  const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, badOptions);
+  const ws = new websocket(`wss://${config.host}:${config.port}`, badOptions);
 
   ws.on('message', (data) => {
     t.fail('Should not receive data!');
@@ -55,7 +55,7 @@ tap.test('WebSocket returns an error for missing certs', (t) => {
   // omit cert
   const { cert, key, ca, ...missingClientOptions } = badOptions;
 
-  const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, missingClientOptions);
+  const ws = new websocket(`wss://${config.host}:${config.port}`, missingClientOptions);
 
   ws.on('message', (data) => {
     t.fail('Should not receive data!');

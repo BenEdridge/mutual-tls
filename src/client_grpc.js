@@ -2,7 +2,7 @@
 
 const grpc = require('grpc');
 const loader = require('@grpc/proto-loader');
-const options = require('./config').clientConfig
+const options = require('./config').clientConfig();
 
 const init = () => {
 

@@ -2,7 +2,7 @@
 
 const http2 = require('http2');
 const https = require('https');
-const options = require('./config').clientConfig;
+const options = require('./config').clientConfig();
 
 const init = () => {
   if (process.env.HTTP_VER === "1") {

@@ -8,7 +8,7 @@ const pki = forge.pki;
 const { CA, SERVER, CLIENT, certConfig } = require('./config');
 const PATH = certConfig.keyPath;
 
-function buildCert(prefix, config, issuer, signer){
+function buildCert(prefix, config, issuer, signer) {
 
   console.log('Building ', prefix, ' ...');
   const kp = pki.rsa.generateKeyPair(certConfig.keySize);
@@ -25,13 +25,13 @@ function buildCert(prefix, config, issuer, signer){
   cert.setSubject(config.attrs);
 
   // Set the CA.attrs as an issuer for both server and client
-  if(issuer){
+  if (issuer) {
     cert.setIssuer(CA.attrs);
   } else {
     cert.setIssuer(config.attrs);
   }
 
-  if(config.extensions){
+  if (config.extensions) {
     cert.setExtensions(config.extensions);
   }
 
@@ -50,20 +50,21 @@ function buildCert(prefix, config, issuer, signer){
   cert.setExtensions(extensions);
   */
 
-  signCert(cert, kp, issuer, signer);
-  writeToFile(prefix, cert, kp);
+    signCert(cert, kp, issuer, signer);
+    writeToFile(prefix, cert, kp);
+
   return { keyPair: kp, certificate: cert }
 }
 
-function signCert(cert, keyPair, issuer = 'none', signer = 'none'){
-  if(issuer === 'none' && signer === 'none') {
+function signCert(cert, keyPair, issuer = 'none', signer = 'none') {
+  if (issuer === 'none' && signer === 'none') {
     cert.sign(keyPair.privateKey, forge.md.sha256.create());
   } else {
     cert.sign(signer.privateKey, forge.md.sha256.create());
   }
 }
 
-function writeToFile(prefix, cert, keyPair){
+function writeToFile(prefix, cert, keyPair) {
 
   const pem = pki.certificateToPem(cert);
   try {
@@ -72,17 +73,17 @@ function writeToFile(prefix, cert, keyPair){
   } catch (e) {
     console.error('Error writing files out', e);
   }
-  console.log('Output files',`${PATH}/${prefix}.crt`, ' and ', `${PATH}/${prefix}_key.pem`);
+  console.log('Output files', `${PATH}/${prefix}.crt`, ' and ', `${PATH}/${prefix}_key.pem`);
 }
 
-function buildAndWriteP12(prefix, privateKey, cert, password){
+function buildAndWriteP12(prefix, privateKey, cert, password) {
   console.log('Building P12', prefix, ' ...');
   // generate a p12 that can be imported by Chrome/Firefox/iOS
   // (requires the use of Triple DES instead of AES)
   const p12Asn1 = forge.pkcs12.toPkcs12Asn1(privateKey, cert, password, { algorithm: '3des' });
   const der = forge.asn1.toDer(p12Asn1).getBytes();
   fs.writeFileSync(`${PATH}/${prefix}.p12`, der, 'binary');
-  console.log('Output file',`${PATH}/${prefix}.p12 with PASSWORD: ${password}`);
+  console.log(`Output file: ${PATH}/${prefix}.p12 with PASSWORD: ${password}`);
 }
 
 try {

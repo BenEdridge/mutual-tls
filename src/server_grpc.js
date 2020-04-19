@@ -3,7 +3,7 @@
 
 const grpc = require('grpc');
 const loader = require('@grpc/proto-loader');
-const options = require('./config').serverConfig;
+const options = require('./config').serverConfig();
 
 const credentials = grpc.ServerCredentials.createSsl(
   options.ca,

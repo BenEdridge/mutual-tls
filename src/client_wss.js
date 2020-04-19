@@ -1,7 +1,7 @@
 'use strict';
 
 const websocket = require('ws');
-const options = require('./config').clientConfig;
+const options = require('./config').clientConfig();
 
 const init = () => {
 
