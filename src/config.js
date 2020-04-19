@@ -1,11 +1,18 @@
 'use strict';
-const fs = require('fs');
 
-const keyPathENV = process.env.KEY_PATH || './keys';
+const fs = require('fs');
+const keyPathENV = process.env.KEY_PATH || `./keys`;
 
 const listenerConfig = Object.freeze({
   host: process.env.HOST || '127.0.0.1',
   port: process.env.PORT || 8443,
+});
+
+const httpConfig = Object.freeze({
+  enableHttp2: false,
+  onlyHttp2: false,
+  allowHTTP1: true,
+  minVersion: 'TLSv1.2',
 });
 
 const certConfig = Object.freeze({
@@ -17,31 +24,23 @@ const certConfig = Object.freeze({
   clientKey: `${keyPathENV}/CLIENT_key.pem`,
   clientCert: `${keyPathENV}/CLIENT.crt`,
   clientCN: 'client_1',
-  clientCN2: 'client_2',
 });
 
-const clientConfig = Object.freeze({
+const buildClientConfig = () => Object.freeze({
   ...listenerConfig,
   key: fs.readFileSync(certConfig.clientKey),
   cert: fs.readFileSync(certConfig.clientCert),
   ca: fs.readFileSync(certConfig.caCert),
-  enableHttp2: false,
-  onlyHttp2: false,
-  allowHTTP1: true,
-  minVersion: 'TLSv1.2',
+  ...httpConfig,
 });
 
-// https://nodejs.org/api/http2.html#http2_http2_createsecureserver_options_onrequesthandler
-const serverConfig = Object.freeze({
+const buildServerConfig = () => Object.freeze({
   ...listenerConfig,
   key: fs.readFileSync(certConfig.serverKey),
   cert: fs.readFileSync(certConfig.serverCert),
   ca: fs.readFileSync(certConfig.caCert),
-  enableHttp2: true,
-  onlyHttp2: false,
-  minVersion: 'TLSv1.2',
+  ...httpConfig,
   requestCert: true,
-  allowHTTP1: true,
   rejectUnauthorized: true, // if enabled you cannot do authentication based on client cert
   checkClientCertificate: true // GRPC_SSL_REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY
   // enableTrace: true, // Debug errors if required
@@ -128,7 +127,7 @@ const CA = Object.freeze({
 const SERVER = Object.freeze({
   attrs: [{
     name: 'commonName',
-    value: serverConfig.host
+    value: listenerConfig.host
   }, {
     name: 'countryName',
     value: 'US'
@@ -140,10 +139,10 @@ const SERVER = Object.freeze({
     value: 'Blacksburg'
   }, {
     name: 'organizationName',
-    value: serverConfig.host,
+    value: listenerConfig.host,
   }, {
     shortName: 'OU',
-    value: serverConfig.host
+    value: listenerConfig.host
   }],
   extensions: [
     {
@@ -217,34 +216,11 @@ const CLIENT = Object.freeze({
   }],
 });
 
-const CLIENT2 = Object.freeze({
-  attrs: [{
-    name: 'commonName',
-    value: certConfig.clientCN2,
-  }, {
-    name: 'countryName',
-    value: 'US'
-  }, {
-    shortName: 'ST',
-    value: 'Virginia'
-  }, {
-    name: 'localityName',
-    value: 'Blacksburg'
-  }, {
-    name: 'organizationName',
-    value: 'test client'
-  }, {
-    shortName: 'OU',
-    value: certConfig.clientCN2,
-  }],
-});
-
 module.exports = {
   CA,
   SERVER,
   CLIENT,
-  CLIENT2,
-  clientConfig,
-  serverConfig,
-  certConfig
+  certConfig,
+  clientConfig: buildClientConfig(),
+  serverConfig: buildServerConfig(),
 };

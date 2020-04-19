@@ -5,7 +5,7 @@ const forge = require('node-forge');
 const crypto = require('crypto');
 const pki = forge.pki;
 
-const { CA, SERVER, CLIENT, CLIENT2, certConfig } = require('./config');
+const { CA, SERVER, CLIENT, certConfig } = require('./config');
 const PATH = certConfig.keyPath;
 
 function buildCert(prefix, config, issuer, signer){
@@ -92,10 +92,7 @@ try {
 }
 
 const dataCA = buildCert('CA', CA);
-
 const client = buildCert('CLIENT', CLIENT, CA, dataCA.keyPair);
-const client2 = buildCert('CLIENT2', CLIENT2, CA, dataCA.keyPair);
 
 buildCert('SERVER', SERVER, CA, dataCA.keyPair);
-
 buildAndWriteP12('CLIENT', client.keyPair.privateKey, client.certificate, crypto.randomBytes(4).toString('hex'));

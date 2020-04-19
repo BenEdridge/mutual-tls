@@ -13,7 +13,7 @@ const badOptions = {
   ca: fs.readFileSync('./tests/bad_keys/CA.crt'),
 };
 
-const {http2Server, wss} = require('../src/server_wss').init();
+const { http2Server, wss } = require('../src/server_wss').init();
 
 tap.test('WebSocket gets a successful response with valid certs', (t) => {
 
@@ -21,13 +21,14 @@ tap.test('WebSocket gets a successful response with valid certs', (t) => {
 
   ws.on('message', (data) => {
     t.equal(data.toString(), 'Welcome to Mutual-TLS Websockets!');
-    ws.terminate(); // immediately close
+    ws.terminate();
     t.end();
   });
 });
 
 tap.test('WebSocket returns an error for invalid certs', (t) => {
-  const ws = new websocket(`wss://127.0.0.1:8443`, badOptions);
+
+  const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, badOptions);
 
   ws.on('message', (data) => {
     t.fail('Should not receive data!');
@@ -39,8 +40,34 @@ tap.test('WebSocket returns an error for invalid certs', (t) => {
 
   ws.on('error', (error) => {
     t.equal(error.toString(), 'Error: certificate signature failure');
-    ws.terminate();
-    wss.close();
+    ws.close();
+    t.end();
+  });
+
+  ws.on('unexpected-response', (req, res) => {
+    t.fail('Should not receive data!');
+  });
+
+});
+
+tap.test('WebSocket returns an error for missing certs', (t) => {
+
+  // omit cert
+  const { cert, key, ca, ...missingClientOptions } = badOptions;
+
+  const ws = new websocket(`wss://${config.clientConfig.host}:${config.clientConfig.port}`, missingClientOptions);
+
+  ws.on('message', (data) => {
+    t.fail('Should not receive data!');
+  });
+
+  ws.on('upgrade', (message) => {
+    t.fail('Should not receive data!');
+  });
+
+  ws.on('error', (error) => {
+    t.equal(error.toString(), 'Error: self signed certificate in certificate chain');
+    ws.close();
     t.end();
   });
 
@@ -51,6 +78,10 @@ tap.test('WebSocket returns an error for invalid certs', (t) => {
 });
 
 tap.tearDown(() => {
-  http2Server.close();
-  wss.close();
+  wss.close((err) => {
+    if (err) throw Error(`Should not throw on close off wss ${err}`);
+    http2Server.close((error) => {
+      if (err) throw Error(`Should not throw on close of server ${error}`);
+    });
+  });
 });

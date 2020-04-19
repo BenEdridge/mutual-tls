@@ -6,6 +6,8 @@ const http2 = require('http2');
 const fs = require('fs');
 const config = require('../src/config');
 
+const server = require('../src/server_http');
+
 const badOptions = {
   host: config.clientConfig.host,
   port: config.clientConfig.port,
@@ -14,7 +16,7 @@ const badOptions = {
   ca: fs.readFileSync('./tests/bad_keys/CA.crt'),
 };
 
-const server = require('../src/server_http').init();
+const httpServer = server.init();
 
 tap.test('http/1 gets a successful response with valid certs', (t) => {
 
@@ -36,7 +38,7 @@ tap.test('http/1 gets a successful response with valid certs', (t) => {
 
 tap.test('http/2 gets a successful response with valid certs', (t) => {
 
-  const clientHttp2Session = http2.connect('https://127.0.0.1:8443', config.clientConfig);
+  const clientHttp2Session = http2.connect(`https://${config.clientConfig.host}:${config.clientConfig.port}`, config.clientConfig);
   const clientHttp2Stream = clientHttp2Session.request();
 
   let data = '';
@@ -53,6 +55,7 @@ tap.test('http/2 gets a successful response with valid certs', (t) => {
 });
 
 tap.test('http/1 returns an error for invalid certs', (t) => {
+
   https.get(badOptions, (res) => {
     res.on('data', (d) => {
       t.fail('Connection Should Fail');
@@ -64,9 +67,41 @@ tap.test('http/1 returns an error for invalid certs', (t) => {
   })
 });
 
+tap.test('http/1 returns an error for missing client cert', (t) => {
+
+  // omit cert
+  const { cert, ...missingClientOptions } = badOptions;
+
+  https.get(missingClientOptions, (res) => {
+    res.on('data', (d) => {
+      t.fail('Connection Should Fail');
+    });
+  }).on('error', (e) => {
+    t.equal(e.toString(), 'Error: certificate signature failure');
+  }).on('close', () => {
+    t.end();
+  })
+});
+
+tap.test('http/1 returns an error for missing cert, ca and key', (t) => {
+
+  // omit cert
+  const { cert, ca, key, ...missingClientOptions } = badOptions;
+
+  https.get(missingClientOptions, (res) => {
+    res.on('data', (d) => {
+      t.fail('Connection Should Fail');
+    });
+  }).on('error', (e) => {
+    t.equal(e.toString(), 'Error: self signed certificate in certificate chain');
+  }).on('close', () => {
+    t.end();
+  })
+});
+
 tap.test('http/2 returns an error for invalid certs', (t) => {
 
-  const clientHttp2Session = http2.connect('https://127.0.0.1:8443', badOptions);
+  const clientHttp2Session = http2.connect(`https://${config.clientConfig.host}:${config.clientConfig.port}`, badOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);
@@ -81,6 +116,28 @@ tap.test('http/2 returns an error for invalid certs', (t) => {
   });
 });
 
+tap.test('http/2 returns an error for missing certs', (t) => {
+
+  // omit cert
+  const { cert, ca, key, ...missingClientOptions } = badOptions;
+
+  const clientHttp2Session = http2.connect(`https://${config.clientConfig.host}:${config.clientConfig.port}`, missingClientOptions);
+  const clientHttp2Stream = clientHttp2Session.request();
+
+  t.plan(2);
+
+  clientHttp2Stream.on('error', (error) => {
+    t.equal(error.message, 'The pending stream has been canceled (caused by: self signed certificate in certificate chain)');
+  });
+
+  clientHttp2Session.on('error', (error) => {
+    t.equal(error.message, 'self signed certificate in certificate chain');
+    t.end();
+  });
+});
+
 tap.tearDown(() => {
-  server.close();
-})
+  httpServer.close((err) => {
+    if (err) throw Error(`Should not throw ${err}`);
+  });
+});

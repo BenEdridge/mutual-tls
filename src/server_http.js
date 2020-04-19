@@ -14,7 +14,7 @@ const init = () => {
 
   //https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
   const http2Server = http2secureServer.listen(options.port, options.host, () => {
-    console.log(`HTTPS/2 and Websocket server listening on ${http2Server.address().address} and port ${http2Server.address().port}`);
+    console.log(`HTTPS/2 server listening on ${http2Server.address().address} and port ${http2Server.address().port}`);
   });
 
   // Emitted each time there is a request. There may be multiple requests per session.
