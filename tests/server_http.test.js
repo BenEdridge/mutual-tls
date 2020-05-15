@@ -103,7 +103,7 @@ tap.test('http/1 returns an error for missing cert, ca and key', (t) => {
 
 tap.test('http/2 returns an error for invalid certs', (t) => {
 
-  const clientHttp2Session = http2.connect(`httpsUrl`, badOptions);
+  const clientHttp2Session = http2.connect(httpsUrl, badOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);
@@ -123,7 +123,7 @@ tap.test('http/2 returns an error for missing certs', (t) => {
   // omit cert
   const { cert, ca, key, ...missingClientOptions } = badOptions;
 
-  const clientHttp2Session = http2.connect(`httpsUrl`, missingClientOptions);
+  const clientHttp2Session = http2.connect(httpsUrl, missingClientOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);
