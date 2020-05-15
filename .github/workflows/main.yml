@@ -15,7 +15,7 @@ jobs:
       uses: actions/setup-node@v1.1.0
       with:
         node-version: "${{ steps.nvm.outputs.NVMRC }}"
-        version: "12.x"
+        version: "14.x"
     - name: Run Tests
       run: |
         echo "node version:" && node --version
