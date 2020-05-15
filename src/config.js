@@ -111,14 +111,6 @@ const CA = Object.freeze({
         {
           type: 6, // URI
           value: 'http://localhost'
-        },
-        {
-          type: 7, // IP
-          ip: '127.0.0.1'
-        },
-        {
-          type: 7, // IP
-          ip: '::'
         }
       ]
     },
@@ -184,7 +176,7 @@ const SERVER = Object.freeze({
       altNames: [
         {
           type: 6, // URI
-          value: 'http://localhost'
+          value: 'https://localhost'
         },
         {
           type: 7, // IP
@@ -192,7 +184,15 @@ const SERVER = Object.freeze({
         },
         {
           type: 7, // IP
+          ip: '0.0.0.0'
+        },
+        {
+          type: 7, // IP
           ip: '::'
+        },
+        {
+          type: 7, // IP
+          ip: '::1'
         }
       ]
     },
