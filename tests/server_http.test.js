@@ -18,6 +18,8 @@ const badOptions = {
 
 const httpServer = server.init();
 
+const httpsUrl = `https://[${config.host}]:${config.port}`;
+
 tap.test('http/1 gets a successful response with valid certs', (t) => {
 
   const req = https.get(config, (res) => {
@@ -38,7 +40,7 @@ tap.test('http/1 gets a successful response with valid certs', (t) => {
 
 tap.test('http/2 gets a successful response with valid certs', (t) => {
 
-  const clientHttp2Session = http2.connect(`https://${config.host}:${config.port}`, config);
+  const clientHttp2Session = http2.connect(httpsUrl, config);
   const clientHttp2Stream = clientHttp2Session.request();
 
   let data = '';
@@ -101,7 +103,7 @@ tap.test('http/1 returns an error for missing cert, ca and key', (t) => {
 
 tap.test('http/2 returns an error for invalid certs', (t) => {
 
-  const clientHttp2Session = http2.connect(`https://${config.host}:${config.port}`, badOptions);
+  const clientHttp2Session = http2.connect(`httpsUrl`, badOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);
@@ -121,7 +123,7 @@ tap.test('http/2 returns an error for missing certs', (t) => {
   // omit cert
   const { cert, ca, key, ...missingClientOptions } = badOptions;
 
-  const clientHttp2Session = http2.connect(`https://${config.host}:${config.port}`, missingClientOptions);
+  const clientHttp2Session = http2.connect(`httpsUrl`, missingClientOptions);
   const clientHttp2Stream = clientHttp2Session.request();
 
   t.plan(2);

@@ -14,7 +14,8 @@ const badOptions = {
 };
 
 const { http2Server, wss } = require('../src/server_wss').init();
-const wssUrl = `wss://[${config.host}]:${config.port}`
+
+const wssUrl = `wss://[${config.host}]:${config.port}`;
 
 tap.test('WebSocket gets a successful response with valid certs', (t) => {
 
