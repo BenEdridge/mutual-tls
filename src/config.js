@@ -4,7 +4,7 @@ const fs = require('fs');
 const keyPathENV = process.env.KEY_PATH || `./keys`;
 
 const listenerConfig = Object.freeze({
-  host: process.env.HOST || '::',
+  host: process.env.HOST || '::1',
   port: process.env.PORT || 8443,
 });
 

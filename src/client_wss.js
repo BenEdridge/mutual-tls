@@ -5,7 +5,7 @@ const options = require('./config').clientConfig();
 
 const init = () => {
 
-  const ws = new websocket(`wss://${options.host}:${options.port}`, options);
+  const ws = new websocket(`wss://[${options.host}]:${options.port}`, options);
 
   ws.on('open', () => {
     ws.send('hello');
