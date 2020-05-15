@@ -4,7 +4,7 @@ const fs = require('fs');
 const keyPathENV = process.env.KEY_PATH || `./keys`;
 
 const listenerConfig = Object.freeze({
-  host: process.env.HOST || '127.0.0.1',
+  host: process.env.HOST || '::',
   port: process.env.PORT || 8443,
 });
 
@@ -115,6 +115,10 @@ const CA = Object.freeze({
         {
           type: 7, // IP
           ip: '127.0.0.1'
+        },
+        {
+          type: 7, // IP
+          ip: '::'
         }
       ]
     },
@@ -185,6 +189,10 @@ const SERVER = Object.freeze({
         {
           type: 7, // IP
           ip: '127.0.0.1'
+        },
+        {
+          type: 7, // IP
+          ip: '::'
         }
       ]
     },
