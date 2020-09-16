@@ -33,7 +33,7 @@
     "test": "tap --jobs=1"
   },
   "devDependencies": {
-    "node-forge": "^0.9.1",
+    "node-forge": "^0.10.0",
     "tap": "^14.10.7"
   },
   "dependencies": {
