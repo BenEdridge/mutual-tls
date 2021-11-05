@@ -8,14 +8,14 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     # https://github.com/actions/setup-node/issues/32#issuecomment-525791142
-    - name: Read .nvmrc
-      run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+    # - name: Read .nvmrc
+    #   run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
       id: nvm
     - name: Setup NodeJS (.nvmrc)
       uses: actions/setup-node@v1.1.0
       with:
         node-version: "${{ steps.nvm.outputs.NVMRC }}"
-        version: "12.x"
+        version: "14.x"
     - name: Run Tests
       run: |
         echo "node version:" && node --version
