@@ -11,15 +11,17 @@ const init = () => {
     ws.send('hello');
   });
   
-  ws.on('message', (data) => {
-    console.info(data);
+  ws.on('message', (data, isBinary) => {
+    const message = isBinary ? data : data.toString();
+    console.info(message);
   });
   
   ws.on('unexpected-response', (req, res) => {
     console.info('unexpected-response', req, res);
   });
   
-  ws.on('close', (code, reason) => {
+  ws.on('close', (code, data) => {
+    const reason = data.toString();
     console.info('WebSocket closed', code, reason);
   });
   

@@ -11,10 +11,11 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=12.x",
+    "node": ">=14.x",
     "npm": ">=6.12.x"
   },
   "scripts": {
+    "start": "TYPE=server PROTOCOL=http node ./src/start.js",
     "start:server_http": "TYPE=server PROTOCOL=http node ./src/start.js",
     "start:server_wss": "TYPE=server PROTOCOL=wss node ./src/start.js",
     "start:server_grpc": "TYPE=server PROTOCOL=grpc node ./src/start.js",
@@ -33,12 +34,12 @@
     "test": "tap --jobs=1"
   },
   "devDependencies": {
-    "node-forge": "^0.9.1",
-    "tap": "^14.10.7"
+    "node-forge": "^0.10.0",
+    "tap": "^15.0.10"
   },
   "dependencies": {
-    "@grpc/proto-loader": "^0.5.4",
-    "grpc": "^1.24.2",
-    "ws": "^7.2.3"
+    "@grpc/proto-loader": "^0.6.6",
+    "grpc": "^1.24.11",
+    "ws": "^8.2.3"
   }
 }

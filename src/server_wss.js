@@ -18,7 +18,8 @@ const init = () => {
 
   wss.on('connection', function connection(ws) {
 
-    ws.on('message', function incoming(message) {
+    ws.on('message', function incoming(data, isBinary) {
+      const message = isBinary ? data : data.toString();
       console.log('Server Received: %s', message);
     });
 
@@ -26,7 +27,8 @@ const init = () => {
       console.info(`upgrade ${message}`);
     });
 
-    ws.on('close', (code, reason) => {
+    ws.on('close', (code, data) => {
+      const reason = data.toString();
       console.info('websocket closed', code, reason);
     });
 
