@@ -1,4 +1,4 @@
-FROM node:alpine3.10
+FROM node:16-alpine
 WORKDIR /usr/src/app
 COPY . .
 RUN npm ci && npm run generate:keys-forge
