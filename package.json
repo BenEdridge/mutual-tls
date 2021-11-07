@@ -31,7 +31,7 @@
     "docker:run:client": "docker run -i --rm --network container:mutual-tls-server --name mutual-tls-client mutual-tls:latest npm run start:client",
     "test:e2e": "npm run docker:run:server && npm run docker:run:client",
     "pretest": "npm run generate:keys-forge",
-    "test": "tap --jobs=1"
+    "test": "tap --jobs=1 --no-check-coverage"
   },
   "devDependencies": {
     "node-forge": "^0.10.0",
