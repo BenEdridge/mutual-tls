@@ -10,7 +10,7 @@ jobs:
     - name: Checkout and Setup NodeJS
       uses: actions/setup-node@v2
       with:
-        node-version: "14"
+        node-version: "16"
     - name: Run Tests
       run: |
         echo "node version:" && node --version
