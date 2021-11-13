@@ -29,6 +29,16 @@ const routeguide = grpc.loadPackageDefinition(packageDefinition).routeguide
 
 const init = () => {
 
+  const message = (context, callback) => {
+    console.log('gRPC Client Request: ', context.request);
+    const response = {
+      data: {
+        message: 'Hello from mutual TLS gRPC Server'
+      }
+    };
+    callback(null, response);
+  };
+
   const server = new grpc.Server();
   server.addService(routeguide.RouteGuide.service, {
     message
@@ -41,16 +51,6 @@ const init = () => {
 
   return server;
 }
-
-const message = (context, callback) => {
-  console.log('gRPC Client Request: ', context.request);
-  const response = {
-    data: {
-      message: 'Hello from mutual TLS gRPC Server'
-    }
-  };
-  callback(null, response);
-};
 
 module.exports = {
   init

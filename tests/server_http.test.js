@@ -136,7 +136,7 @@ tap.test('http/2 returns an error for missing certs', (t) => {
   });
 });
 
-tap.tearDown(() => {
+tap.teardown(() => {
   httpServer.close((err) => {
     if (err) throw Error(`Should not throw ${err}`);
   });

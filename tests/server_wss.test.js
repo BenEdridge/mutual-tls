@@ -77,7 +77,7 @@ tap.test('WebSocket returns an error for missing certs', (t) => {
 
 });
 
-tap.tearDown(() => {
+tap.teardown(() => {
   wss.close((err) => {
     if (err) throw Error(`Should not throw on close off wss ${err}`);
     http2Server.close((error) => {
