@@ -34,7 +34,7 @@
     "test": "tap --jobs=1 --no-check-coverage"
   },
   "devDependencies": {
-    "node-forge": "^0.10.0",
+    "node-forge": "^1.0.0",
     "tap": "^15.0.10"
   },
   "dependencies": {
